@@ -39,7 +39,7 @@ const int SERVO_MIN_US = 500;
 const int SERVO_MAX_US = 2400;
 
 // false = Servo를 attach 상태로 유지
-const bool DETACH_AFTER_MOVE = false;
+const bool DETACH_AFTER_MOVE = true;
 
 
 // ==================================================

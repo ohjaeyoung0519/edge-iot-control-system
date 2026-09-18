@@ -18,16 +18,17 @@ env/
 secrets.h
 config.json
 wifi_config.py
+wifi_config.h
+**/wifi_config.h
 *.key
 *.pem
+
+# Local backups
+*.bak
+*.backup
+*.before_*
 
 # Large media files
 *.mp4
 *.mov
 *.avi
-
-wifi_config.h
-**/wifi_config.h
-
-# Local Wi-Fi credentials
-wifi_config.h

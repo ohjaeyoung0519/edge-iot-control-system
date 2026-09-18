@@ -502,6 +502,8 @@ Reset / Failure: 관찰되지 않음
 
 [실험 데이터 문서](data/README.md) | [English](data/README_EN.md)
 
+개발 과정과 초기 계획 문서는 [docs/README.md](docs/README.md)에 정리했습니다.
+
 ---
 
 ## 분석 환경
@@ -533,6 +535,20 @@ Serial Baud: 115200
 ---
 
 ## 분석 재현
+
+분석용 Python 패키지:
+
+```bash
+python -m pip install -r analysis/requirements.txt
+```
+
+Raspberry Pi 서버 및 Benchmark 도구용 패키지:
+
+```bash
+python -m pip install -r raspberry-pi/server/requirements.txt
+```
+
+분석 실행:
 
 ```bash
 python analysis/analyze_protocol_benchmark.py

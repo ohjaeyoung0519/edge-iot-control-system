@@ -1,3 +1,7 @@
 # Report
 
-This directory contains the final project report and related figures.
+프로젝트의 검증된 핵심 결과와 재현 정보는 루트 `README.md`와 `data/README.md`에 정리되어 있습니다.
+
+전체 기술 보고서는 별도로 작성했으며, 공개용 PDF를 저장소에 포함하기로 결정한 경우 이 디렉터리에 추가합니다.
+
+> 현재 저장소에는 전체 기술 보고서 PDF가 포함되어 있지 않습니다.

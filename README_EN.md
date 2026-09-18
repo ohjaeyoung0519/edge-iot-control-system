@@ -496,6 +496,8 @@ Detailed dataset documentation:
 
 [한국어](data/README.md) | [English](data/README_EN.md)
 
+Development history and initial planning notes are documented in [docs/README.md](docs/README.md).
+
 ---
 
 ## Analysis Environment
@@ -527,6 +529,20 @@ Serial Baud: 115200
 ---
 
 ## Reproducing the Analysis
+
+Analysis dependencies:
+
+```bash
+python -m pip install -r analysis/requirements.txt
+```
+
+Raspberry Pi server and benchmark dependencies:
+
+```bash
+python -m pip install -r raspberry-pi/server/requirements.txt
+```
+
+Run the analysis:
 
 ```bash
 python analysis/analyze_protocol_benchmark.py

@@ -313,3 +313,29 @@ Light Switch Node에서는 Light OFF 버튼을 누를 때 재확인 알림이 �
 입원 중에는 현재까지 구현한 Raspberry Pi 서버, ESP32 Light Switch Node, ESP32 PC Power Node, LDR 기반 상태 검증, ping 기반 상태 확인, Dashboard 통합 구조를 보고서에 정리함. 단순 구현 과정뿐만 아니라 통신 구조, 상태 판단 로직, 실패 원인 분석, 하드웨어 한계, 개선 방향을 포함하여 작성함.
 
 퇴원 후에는 IR 송수신 Node를 추가하여 에어컨 리모컨 제어 기능을 확장함. Pi Camera 기반 영상 인식 기능은 현재 구현 범위에 포함하지 않고, 향후 확장 기능으로 분리함.
+
+
+---
+
+## 2026-09 Final Benchmark and Scope
+
+9월에는 기능 구현 이후 시스템 성능을 분리해서 확인하기 위해 HTTP, MQTT QoS 0, MQTT QoS 1의 Application RTT를 비교함. Servo, LDR, Ping과 같은 물리 제어 요소를 제외한 Benchmark 경로를 구성했고, Protocol당 1000회씩 총 3000회의 Main Benchmark를 수행함. 모든 Main Request는 성공함.
+
+주요 결과는 다음과 같았음.
+
+- MQTT QoS 0 Mean RTT: 15.319 ms
+- HTTP Mean RTT: 20.515 ms
+- MQTT QoS 1 Mean RTT: 61.282 ms
+- ESP32 Benchmark Handler Processing: 세 조건 모두 약 0.4 ms
+- Light Control E2E Mean: 1032.247 ms
+- Raspberry Pi Resource Usage: 현재 Sequential Workload에서 낮은 수준으로 관찰됨
+
+초기 MQTT 측정에서 약 100 ms 이상으로 높게 나타난 RTT를 확인한 뒤 ESP32 Wi-Fi Power Saving을 별도 점검함. MQTT QoS 0 기준 Wi-Fi Sleep ON에서 평균 121.279 ms, Sleep OFF에서 평균 15.886 ms가 확인되어 최종 Main Benchmark는 모든 Protocol에서 `WiFi.setSleep(false)` 조건으로 통일함.
+
+최종 구현 범위는 Light Switch Node와 PC Power Node로 정리함. 초기 계획에 포함됐던 IR 제어 및 Camera 기반 Vision 기능은 이번 프로젝트의 최종 구현 범위에 포함하지 않음.
+
+### 2026-09 Servo Holding Issue
+
+실사용 중 Light Switch Node의 MG996R Servo가 REST 위치에서도 미세하게 떨리며 구동음이 발생하고, 이후 동작이 불안정해지는 현상을 확인함. 외부 5V 5A 전원은 멀티미터 측정에서 정상 범위였고, Servo 동작 완료 후 PWM을 유지하지 않도록 `DETACH_AFTER_MOVE = true`로 변경했을 때 증상이 사라짐.
+
+따라서 현재 운영용 Light Switch Firmware는 동작 완료 후 Servo PWM을 detach하도록 설정함. 이 현상은 지속적인 Position Holding과 Mechanical Load가 겹친 조건과 관련된 것으로 판단했으며, 단일 온도 관찰만으로 발열 원인을 정량적으로 단정하지는 않음.
