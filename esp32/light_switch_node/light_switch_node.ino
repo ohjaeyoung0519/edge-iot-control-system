@@ -38,7 +38,7 @@ const unsigned long DEBOUNCE_MS = 300;
 const int SERVO_MIN_US = 500;
 const int SERVO_MAX_US = 2400;
 
-// false = Servo를 attach 상태로 유지
+// true = 동작 완료 후 Servo PWM을 detach하여 holding torque를 해제
 const bool DETACH_AFTER_MOVE = true;
 
 
