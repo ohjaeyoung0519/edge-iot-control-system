@@ -1,12 +1,15 @@
-# Edge IoT Vision & Control System
+# Edge IoT Control System
 
 **한국어** | [English](README_EN.md)
+
+[GitHub: ohjaeyoung0519/edge-iot-control-system](https://github.com/ohjaeyoung0519/edge-iot-control-system)
 
 Raspberry Pi 5와 ESP32를 이용해 실제 물리 장치를 제어하고, 통신 지연, ESP32 처리시간과 Heap, Raspberry Pi 자원 사용량, 물리 구동 지연과 신뢰성을 직접 측정·분석한 개인 프로젝트입니다.
 
 처음에는 ESP32와 Servo를 이용한 원격 제어 구현에서 시작했으며, 이후 단순히 “작동하는 시스템”을 만드는 것에서 나아가 **어디에서 지연이 발생하고 어떤 요소가 실제 사용자 체감 성능과 안정성을 결정하는지** 분석하는 방향으로 확장했습니다.
 
 > 현재 구현 및 분석 범위는 **Light Switch Node**와 **PC Power Node**를 중심으로 합니다.
+> IR 및 Camera/Vision은 초기 확장 계획이며 **최종 구현 범위에 포함되지 않습니다.**
 
 ---
 

@@ -150,10 +150,10 @@ def home():
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Edge IoT Vision & Control System</title>
+  <title>Edge IoT Control System</title>
 </head>
 <body>
-  <h1>Edge IoT Vision & Control System</h1>
+  <h1>Edge IoT Control System</h1>
   <p>Raspberry Pi server is running.</p>
 
   <h2>Dashboard</h2>

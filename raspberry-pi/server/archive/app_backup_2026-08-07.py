@@ -12,7 +12,7 @@ ESP32_BASE_URL = "http://192.168.0.36"
 @app.route("/")
 def home():
     return """
-    <h1>Edge IoT Vision & Control System</h1>
+    <h1>Edge IoT Control System</h1>
     <p>Raspberry Pi server is running.</p>
     <p>ESP32 connection test endpoint: /api/esp32/ping</p>
     """

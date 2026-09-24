@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return """
-    <h1>Edge IoT Vision & Control System</h1>
+    <h1>Edge IoT Control System</h1>
     <p>Raspberry Pi server is running.</p>
     <p>Next step: connect ESP32 control node.</p>
     """

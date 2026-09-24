@@ -1,12 +1,15 @@
-# Edge IoT Vision & Control System
+# Edge IoT Control System
 
 [한국어](README.md) | **English**
+
+[GitHub: ohjaeyoung0519/edge-iot-control-system](https://github.com/ohjaeyoung0519/edge-iot-control-system)
 
 This is a personal project using Raspberry Pi 5 and ESP32 to control physical devices and directly measure and analyze communication latency, ESP32 processing time and heap behavior, Raspberry Pi resource usage, physical actuation latency, and control reliability.
 
 The project started as a remote-control system using ESP32 and servo motors. It was later extended beyond simply making the system work, with a focus on analyzing where latency occurs and which factors affect user-visible performance and reliability.
 
 > The current implementation and analysis focus on the **Light Switch Node** and **PC Power Node**.
+> IR and Camera/Vision were initial extension ideas and are **not part of the final implementation**.
 
 ---
 

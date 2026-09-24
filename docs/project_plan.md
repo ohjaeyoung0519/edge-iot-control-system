@@ -1,11 +1,11 @@
 > **Historical planning document**  
-> 이 문서는 프로젝트 초기에 작성한 계획을 보존한 기록입니다. IR / Camera 관련 항목은 당시 검토한 확장 아이디어이며 **최종 구현 범위가 아닙니다.** 최종 구현 및 분석 범위는 Light Switch Node와 PC Power Node이며, 현재 상태는 루트 `README.md`와 `data/README.md`를 기준으로 합니다.
+> 이 문서는 프로젝트 초기에 작성한 계획을 보존한 기록입니다. IR / Camera / Vision 관련 항목은 당시 검토한 확장 아이디어이며 **최종 구현 범위가 아닙니다.** 최종 구현 및 분석 범위는 Light Switch Node와 PC Power Node이며, 현재 상태는 루트 `README.md`와 `data/README.md`를 기준으로 합니다.
 
 # Project Plan
 
-## Project Title
+## Project Title (current name)
 
-Edge IoT Vision & Control System
+Edge IoT Control System
 
 ## Objective
 

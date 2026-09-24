@@ -95,7 +95,7 @@ def decide_pc_power_state(ping_ok, led_on):
 @app.route("/")
 def home():
     return """
-    <h1>Edge IoT Vision & Control System</h1>
+    <h1>Edge IoT Control System</h1>
     <p>Raspberry Pi server is running.</p>
 
     <h2>Basic</h2>

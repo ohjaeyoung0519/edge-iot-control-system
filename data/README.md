@@ -2,7 +2,7 @@
 
 **한국어** | [English](README_EN.md)
 
-이 디렉터리는 **Edge IoT Vision & Control System**의 실험 과정에서 생성한 Raw Data, Processed Data, Figure를 정리합니다.
+이 디렉터리는 **Edge IoT Control System**의 실험 과정에서 생성한 Raw Data, Processed Data, Figure를 정리합니다.
 
 최종 분석에 사용한 데이터뿐 아니라 Dry Run, 원인 확인을 위한 Diagnostic Data, 실험 조건 문제로 제외한 데이터, 프로젝트 초기의 Legacy Data도 구분하여 보존했습니다.
 

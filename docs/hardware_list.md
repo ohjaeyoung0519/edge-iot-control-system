@@ -1,5 +1,7 @@
 # Hardware List
 
+> 이 목록은 개발 당시 준비·계획한 하드웨어 기록입니다. IR 및 Camera/Vision 관련 항목은 **최종 구현 범위에 포함되지 않습니다.** 최종 구현은 Light Switch Node와 PC Power Node이며, 현재 구성은 [프로젝트 README](../README.md)를 기준으로 합니다.
+
 | Component | Quantity | Purpose | Status |
 |---|---:|---|---|
 | Raspberry Pi 5 8GB | 1 | Central edge server | Received |

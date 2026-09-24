@@ -2,7 +2,7 @@
 
 [한국어](README.md) | **English**
 
-This directory contains the Raw Data, Processed Data, and Figures generated during the experiments for the **Edge IoT Vision & Control System**.
+This directory contains the Raw Data, Processed Data, and Figures generated during the experiments for the **Edge IoT Control System**.
 
 In addition to the datasets used for the final analysis, Dry Runs, Diagnostic Data used for investigating causes, datasets excluded because of experimental-condition issues, and early Legacy Data are also preserved separately.
 
