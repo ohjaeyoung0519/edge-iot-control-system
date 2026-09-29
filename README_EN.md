@@ -6,9 +6,9 @@ A personal Raspberry Pi 5–ESP32 project that progressed from **implementation 
 
 ## Quick Links
 
-**[Project Report Information — PDF Not Included](report/README.md)** · [Dataset Guide](data/README_EN.md) · [Raw Data](data/raw/) · [Processed Results](data/processed/) · [ESP32 Code](esp32/) · [Raspberry Pi Code](raspberry-pi/) · [한국어](README.md)
+**[Full Project Report (PDF)](report/Edge_IoT_Control_System_Report.pdf)** · [Dataset Guide](data/README_EN.md) · [Raw Data](data/raw/) · [Processed Results](data/processed/) · [ESP32 Code](esp32/) · [Raspberry Pi Code](raspberry-pi/) · [한국어](README.md)
 
-> The full technical report was written separately; its PDF is not currently included in this repository.
+> The [full technical report (PDF)](report/Edge_IoT_Control_System_Report.pdf) covers the system implementation, experimental design, and analysis of results.
 
 ## Analysis Highlights
 
@@ -493,6 +493,7 @@ This is also a short-term observation over 10 minutes, not a long-term durabilit
 ├── docs/
 ├── images/
 ├── report/
+│   └── Edge_IoT_Control_System_Report.pdf
 ├── README.md
 └── README_EN.md
 ```
