@@ -1,12 +1,23 @@
-# Edge IoT Vision & Control System
+# Edge IoT Control System
 
 **한국어** | [English](README_EN.md)
 
-Raspberry Pi 5와 ESP32를 이용해 실제 물리 장치를 제어하고, 통신 지연, ESP32 처리시간과 Heap, Raspberry Pi 자원 사용량, 물리 구동 지연과 신뢰성을 직접 측정·분석한 개인 프로젝트입니다.
+Raspberry Pi 5와 ESP32로 실제 물리 장치를 제어하고, **구현 → 측정 → 원인 분석 → 개선**으로 확장한 개인 프로젝트입니다. Application RTT, ESP32 처리시간·Heap, Raspberry Pi 자원 사용량, 물리 구동 지연과 성공 여부를 구분하여 분석했습니다.
 
-처음에는 ESP32와 Servo를 이용한 원격 제어 구현에서 시작했으며, 이후 단순히 “작동하는 시스템”을 만드는 것에서 나아가 **어디에서 지연이 발생하고 어떤 요소가 실제 사용자 체감 성능과 안정성을 결정하는지** 분석하는 방향으로 확장했습니다.
+## Quick Links
 
-> 현재 구현 및 분석 범위는 **Light Switch Node**와 **PC Power Node**를 중심으로 합니다.
+**[프로젝트 보고서 안내 — PDF 미포함](report/README.md)** · [실험 데이터 안내](data/README.md) · [Raw Data](data/raw/) · [분석 결과](data/processed/) · [ESP32 코드](esp32/) · [Raspberry Pi 코드](raspberry-pi/) · [English](README_EN.md)
+
+> 전체 기술 보고서는 별도로 작성되었으며, 현재 저장소에는 PDF가 포함되어 있지 않습니다.
+
+## 핵심 분석 하이라이트
+
+- **Wi-Fi Sleep A/B test:** MQTT QoS 0의 평균 RTT가 Sleep ON **121.279 ms → OFF 15.886 ms**로 감소했습니다(조건별 30회). 최종 Sleep OFF 본실험 1000회에서도 **15.319 ms**를 관찰하여 설정의 영향을 재확인했습니다.
+- **ESP32 처리시간 분리:** 측정한 Handler 처리시간은 세 protocol 모두 **약 0.4 ms**로, **15–61 ms**의 Application RTT 차이를 설명하기 어려웠습니다. 나머지 구간은 Host·Network·Protocol 처리가 섞인 RTT remainder로 해석했습니다.
+- **Light E2E 지연 분석:** 20회 측정에서 평균 **1032.247 ms** 중 **1000 ms(약 96.9%)**가 설정된 Servo Hold·Return 지연이었습니다. 측정 기준은 물리 접촉 순간이 아닌 **Application Request Completion**입니다.
+- **물리 구동 개선과 단기 검증:** 초기 **7/20** 성공에서 Servo 교체·고정 보강·각도 보정을 함께 적용한 뒤 **40/40** 성공을 관찰했습니다. 이는 **short-run validation**이며 장기 신뢰성이나 개별 개선 요소의 효과를 입증하지 않습니다.
+
+> 구현 및 분석 범위: **Light Switch Node · PC Power Node**. IR 및 Camera/Vision은 초기 확장 계획이며 최종 구현에 포함되지 않습니다.
 
 ---
 
@@ -16,13 +27,7 @@ Raspberry Pi 5와 ESP32를 이용해 실제 물리 장치를 제어하고, 통�
 
 최종 benchmark는 모든 protocol에서 ESP32 Wi-Fi Sleep을 비활성화한 상태로 수행했습니다.
 
-- HTTP: 1000회
-- MQTT QoS 0: 1000회
-- MQTT QoS 1: 1000회
-- 총 3000회
-- 모든 요청 성공: **3000 / 3000**
-- Protocol당 200회 × 5 Run
-- Run별 protocol 실행 순서를 교차하여 측정 순서 영향을 줄임
+Protocol당 **200회 × 5 Run = 1000회**, 총 **3000/3000 요청이 성공**했습니다. Run별 실행 순서를 교차하여 측정 순서의 영향을 줄였습니다. 아래 값은 순수 Network Latency가 아닌 **Application RTT**입니다.
 
 | Protocol | Mean RTT | Median | P95 | P99 | 성공 |
 |---|---:|---:|---:|---:|---:|
@@ -220,7 +225,7 @@ MQTT QoS 1 : 61.282 ms
 
 ---
 
-## Communication Bottleneck 분석
+## RTT Remainder 분석
 
 분석을 위해 다음 값을 사용했습니다.
 
@@ -247,7 +252,7 @@ Measured ESP32 Handler Processing
 - Response Generation
 - Response Reception
 
-따라서 이 값을 **순수 Network Latency로 해석하지 않습니다.**
+따라서 이 값을 **순수 Network Latency로 해석하지 않습니다.** 각 구성요소를 독립적으로 측정하지 않았으므로 특정 Network·TCP·Broker 단계가 병목이라고 단정할 수 없습니다.
 
 ![Latency Breakdown](data/figures/latency_breakdown.png)
 
@@ -257,7 +262,7 @@ Measured ESP32 Handler Processing
 
 초기 MQTT 측정에서는 예상보다 높은 약 100 ms 수준의 RTT가 반복적으로 관찰됐습니다.
 
-ESP32 Wi-Fi Power Saving의 영향을 의심하여 별도의 A/B 실험을 수행했습니다.
+ESP32 Wi-Fi Power Saving의 영향을 의심하여 조건별 30회의 별도 A/B 실험을 수행했습니다.
 
 Wi-Fi Sleep ON 확인 측정:
 
@@ -359,7 +364,7 @@ MQTT 사용 시 Mosquitto의 CPU Activity가 HTTP Idle 상태보다 증가했지
 
 ## 실제 Light Control End-to-End Latency
 
-Protocol Benchmark에서는 Servo Delay를 제외했으므로 실제 물리 제어의 사용자 체감 latency를 별도로 측정했습니다.
+Protocol Benchmark에서는 Servo Delay를 제외했으므로 실제 Light ON/OFF 요청의 완료시간을 별도로 측정했습니다. 이는 Application Request Completion 기준이며, 외부 센서로 측정한 물리 접촉 시각은 아닙니다. 이 실험의 HTTP 응답 성공과 별도의 40회 물리 구동 성공 여부도 구분합니다.
 
 ```text
 ON   : 10회
@@ -424,7 +429,7 @@ Non-programmed Remainder
 - Servo 및 구조물 고정 강화
 - 5° / 10° 단위 Control Angle Calibration
 
-최종 시험:
+**최종 단기 검증(Short-run Validation):**
 
 ```text
 ON  : 20 / 20
@@ -432,8 +437,10 @@ OFF : 20 / 20
 
 Total
 40 / 40
-= 100%
+= 100% of observed trials
 ```
+
+40/40은 해당 구성과 시험 조건에서 관찰한 결과이며, 장기 신뢰성이나 모든 환경에서의 성공률을 보장하지 않습니다.
 
 따라서 신뢰성 향상을 단순히 Servo Torque 증가 하나의 영향으로 해석하지 않고 다음 요소의 복합적인 개선 결과로 해석했습니다.
 
@@ -454,6 +461,8 @@ Surface Temp   : 약 26.5°C → 27.8°C
 Reset / Failure: 관찰되지 않음
 ```
 
+이 시험 역시 10분 범위의 단기 관찰이며 장기 내구성 검증이 아닙니다.
+
 ---
 
 ## 주요 결론
@@ -463,7 +472,7 @@ Reset / Failure: 관찰되지 않음
 3. **Wi-Fi Power Saving 설정이 latency에 큰 영향을 주었습니다.**
 4. **현재 workload에서 Raspberry Pi 5의 자원 사용량은 낮은 수준이었습니다.**
 5. **실제 Light Control의 사용자 체감 latency는 Communication보다 Physical Actuation이 지배했습니다.**
-6. **물리 제어 신뢰성은 Software뿐 아니라 Actuator, Mounting, Calibration에도 크게 영향을 받았습니다.**
+6. **Actuator·Mounting·Calibration을 함께 개선한 뒤 단기 물리 구동 검증에서 40/40 성공을 관찰했습니다.**
 
 ---
 
@@ -591,6 +600,7 @@ legacy
 - Raspberry Pi와 ESP32는 동일 Clock을 공유하지 않으므로 장치 간 Absolute Timestamp를 직접 빼지 않았습니다.
 - `RTT - ESP Processing`을 순수 Network Latency로 해석하지 않습니다.
 - Light E2E는 외부 Sensor로 실제 물리 접촉 순간을 측정한 값이 아니라 Application Request Completion 기준입니다.
+- 물리 구동 40/40과 10분 Servo 시험은 단기 검증이며 장기 신뢰성·내구성을 입증하지 않습니다.
 - Heap 결과는 측정한 Workload 범위 내에서만 해석합니다.
 - Raspberry Pi Resource 실험은 0.2초 간격의 Sequential Workload이며 Maximum Throughput 실험이 아닙니다.
 
@@ -601,27 +611,3 @@ legacy
 이번 프로젝트를 통해 단순한 기능 구현보다, 실제 시스템에서 발생하는 latency와 resource usage를 측정하고 원인을 분석하는 과정에 흥미를 느꼈습니다.
 
 앞으로는 운영체제, 메모리 시스템, 컴퓨터 구조와 관련된 내용을 더 공부하면서 시스템 성능을 분석하는 경험을 확장하고 싶습니다.
-
----
-
-## 프로젝트를 통해 확인한 점
-
-이 프로젝트의 목표는 단순히 Servo를 원격으로 움직이는 것에 그치지 않습니다.
-
-실제로 동작하는 Edge IoT System을 구현한 뒤, **시스템의 어느 계층에서 latency와 reliability 문제가 발생하는지 직접 측정하고 구분하는 것**을 목표로 했습니다.
-
-```text
-Communication Layer
-→ Protocol / Wi-Fi Configuration
-
-Embedded Runtime
-→ ESP32 Processing / Heap
-
-Edge Host
-→ Raspberry Pi / Mosquitto Resource
-
-Physical Layer
-→ Actuator Delay / Mounting / Calibration
-```
-
-단순 기능 구현에서 끝나지 않고, 구현한 시스템의 실제 동작을 측정하고 원인을 추적하는 과정까지 수행한 것이 이 프로젝트의 핵심입니다.

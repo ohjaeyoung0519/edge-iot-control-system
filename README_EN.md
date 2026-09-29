@@ -1,12 +1,23 @@
-# Edge IoT Vision & Control System
+# Edge IoT Control System
 
 [한국어](README.md) | **English**
 
-This is a personal project using Raspberry Pi 5 and ESP32 to control physical devices and directly measure and analyze communication latency, ESP32 processing time and heap behavior, Raspberry Pi resource usage, physical actuation latency, and control reliability.
+A personal Raspberry Pi 5–ESP32 project that progressed from **implementation to measurement, diagnosis, and improvement** of physical device control. The analysis distinguishes application RTT, ESP32 processing time and heap behavior, Raspberry Pi resource usage, and physical actuation latency and success.
 
-The project started as a remote-control system using ESP32 and servo motors. It was later extended beyond simply making the system work, with a focus on analyzing where latency occurs and which factors affect user-visible performance and reliability.
+## Quick Links
 
-> The current implementation and analysis focus on the **Light Switch Node** and **PC Power Node**.
+**[Project Report Information — PDF Not Included](report/README.md)** · [Dataset Guide](data/README_EN.md) · [Raw Data](data/raw/) · [Processed Results](data/processed/) · [ESP32 Code](esp32/) · [Raspberry Pi Code](raspberry-pi/) · [한국어](README.md)
+
+> The full technical report was written separately; its PDF is not currently included in this repository.
+
+## Analysis Highlights
+
+- **Wi-Fi Sleep A/B test:** Mean MQTT QoS 0 RTT decreased from **121.279 ms with Sleep ON to 15.886 ms with Sleep OFF** (30 requests per condition). The final 1000-request Sleep OFF benchmark showed a similar mean of **15.319 ms**, supporting the effect of this setting.
+- **Separating ESP32 processing time:** Measured handler processing was **about 0.4 ms** for all three protocols and could not explain application RTT differences across **15–61 ms**. The remaining interval was treated as an RTT remainder containing host, network, and protocol processing.
+- **Light E2E latency analysis:** Across 20 measurements, programmed servo hold and return delays accounted for **1000 ms (about 96.9%)** of the **1032.247 ms** mean. The endpoint was **application request completion**, not the instant of physical contact.
+- **Physical actuation improvement and short-run validation:** Observed success improved from **7/20** initial trials to **40/40** after jointly changing the servo, reinforcing its mounting, and calibrating angles. This is **short-run validation**, not evidence of long-term reliability or the isolated effect of any one change.
+
+> Implementation and analysis scope: **Light Switch Node · PC Power Node**. IR and Camera/Vision were initial extension ideas and are not part of the final implementation.
 
 ---
 
@@ -16,13 +27,7 @@ The project started as a remote-control system using ESP32 and servo motors. It 
 
 All final protocol measurements were performed with ESP32 Wi-Fi Sleep disabled.
 
-- HTTP: 1000 requests
-- MQTT QoS 0: 1000 requests
-- MQTT QoS 1: 1000 requests
-- 3000 total requests
-- All requests succeeded: **3000 / 3000**
-- 200 requests × 5 runs per protocol
-- Protocol order was rotated across runs to reduce fixed-order effects
+**200 requests × 5 runs = 1000 requests per protocol; all 3000/3000 requests succeeded.** Protocol order was rotated across runs to reduce fixed-order effects. The values below are **application RTT**, not pure network latency.
 
 | Protocol | Mean RTT | Median | P95 | P99 | Success |
 |---|---:|---:|---:|---:|---:|
@@ -32,11 +37,7 @@ All final protocol measurements were performed with ESP32 Wi-Fi Sleep disabled.
 
 In this implementation and local Wi-Fi environment, MQTT QoS 0 produced the lowest application-level RTT.
 
-MQTT QoS 1 showed substantially higher application-level RTT than MQTT QoS 0.
-
 This result is specific to the tested system and experimental environment and should not be interpreted as a universal protocol ranking.
-
-These measurements are **application-level RTT values**, not pure network propagation latency.
 
 ![Latency Percentiles](data/figures/latency_percentiles.png)
 
@@ -224,7 +225,7 @@ Therefore, the protocol-dependent RTT differences were not dominated by the meas
 
 ---
 
-## Communication Bottleneck Analysis
+## RTT Remainder Analysis
 
 The following derived value was used:
 
@@ -251,7 +252,7 @@ The remainder may include:
 - Response generation
 - Response reception
 
-It is **not interpreted as pure network latency**.
+It is **not interpreted as pure network latency**. These components were not timed independently, so the remainder does not identify a specific network, TCP, or broker stage as the bottleneck.
 
 ![Latency Breakdown](data/figures/latency_breakdown.png)
 
@@ -261,7 +262,7 @@ It is **not interpreted as pure network latency**.
 
 Early MQTT measurements repeatedly showed unexpectedly high RTT values near the 100 ms scale.
 
-A separate A/B diagnostic was performed to test the effect of ESP32 Wi-Fi power saving.
+A separate A/B diagnostic with 30 requests per condition was performed to test the effect of ESP32 Wi-Fi power saving.
 
 Confirmed Wi-Fi Sleep ON measurement:
 
@@ -361,7 +362,7 @@ The CPU percentages are workload averages including the 0.2 s request interval a
 
 ## Light Control End-to-End Latency
 
-Physical Light Switch latency was measured separately from the protocol benchmark.
+Completion time for actual Light ON/OFF requests was measured separately from the protocol benchmark. The endpoint is application request completion, not an external sensor timestamp of physical contact. HTTP response success in this experiment is also distinct from the separate 40-trial physical actuation validation.
 
 ```text
 ON   : 10 measurements
@@ -426,7 +427,7 @@ The final configuration combined:
 - Stronger mechanical mounting
 - 5° / 10° control-angle calibration
 
-Final test:
+**Final Short-run Validation:**
 
 ```text
 ON  : 20 / 20
@@ -434,8 +435,10 @@ OFF : 20 / 20
 
 Total
 40 / 40
-= 100%
+= 100% of observed trials
 ```
+
+The 40/40 result applies to this configuration and these test conditions; it does not establish long-term reliability or guarantee success in other environments.
 
 The reliability improvement is attributed to the combined effect of actuator capability, mechanical mounting, and angle calibration rather than servo torque alone.
 
@@ -448,6 +451,8 @@ Surface Temp   : approximately 26.5°C → 27.8°C
 Reset / Failure: none observed
 ```
 
+This is also a short-term observation over 10 minutes, not a long-term durability test.
+
 ---
 
 ## Main Findings
@@ -457,7 +462,7 @@ Reset / Failure: none observed
 3. **ESP32 Wi-Fi power-saving configuration had a large effect on latency.**
 4. **Raspberry Pi 5 resource usage remained low under the tested workload.**
 5. **Physical actuation timing dominated user-visible Light Control latency.**
-6. **Reliable physical control depended on actuator selection, mounting, and calibration as well as software.**
+6. **Joint improvements to the actuator, mounting, and calibration were followed by 40/40 successful trials in short-run physical actuation validation.**
 
 ---
 
@@ -585,6 +590,7 @@ Rejected or invalid measurements are preserved with their exclusion reason inste
 - Raspberry Pi and ESP32 do not share a synchronized clock, so absolute timestamps from different devices are not directly subtracted.
 - `RTT - ESP Processing` is not treated as pure network latency.
 - Light E2E is based on application request completion, not an external sensor timestamp of physical switch contact.
+- The 40/40 actuation result and 10-minute servo test are short-run validations, not evidence of long-term reliability or durability.
 - Heap conclusions are limited to the measured workload.
 - The Raspberry Pi resource experiment used a sequential 0.2 s request workload and is not a maximum-throughput test.
 
@@ -595,27 +601,3 @@ Rejected or invalid measurements are preserved with their exclusion reason inste
 Through this project, I became more interested not only in implementing working features, but also in measuring latency and resource usage in real systems and analyzing the causes of performance differences.
 
 Going forward, I would like to study operating systems, memory systems, and computer architecture in more depth, and further develop my experience in system performance analysis.
-
----
-
-## Project Direction
-
-The goal of this project is not only to move a servo remotely.
-
-It is to build a working edge IoT system and then identify **where latency and reliability problems actually occur across the system stack**.
-
-```text
-Communication Layer
-→ Protocol / Wi-Fi Configuration
-
-Embedded Runtime
-→ ESP32 Processing / Heap
-
-Edge Host
-→ Raspberry Pi / Mosquitto Resource
-
-Physical Layer
-→ Actuator Delay / Mounting / Calibration
-```
-
-The main value of this project is the process of moving from functional implementation to measurement, diagnosis, and bottleneck analysis.
