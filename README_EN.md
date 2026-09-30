@@ -8,13 +8,24 @@ A personal Raspberry Pi 5–ESP32 project that started with physical device cont
 
 **[Full Project Report (PDF)](report/Edge_IoT_Control_System_Report.pdf)** · [Dataset Guide](data/README_EN.md) · [Raw Data](data/raw/) · [Processed Results](data/processed/) · [ESP32 Code](esp32/) · [Raspberry Pi Code](raspberry-pi/) · [한국어](README.md)
 
+## Actual Implementation
+
+<p align="center">
+  <img src="images/results/light_switch_node_servo_mount.jpeg" width="48%" alt="Light Switch Node">
+  <img src="images/results/pc_power_node_servo_ldr_mount.jpeg" width="48%" alt="PC Power Node">
+</p>
+
+<p align="center">
+  <b>Light Switch Node</b> · <b>PC Power Node</b>
+</p>
+
 ## Highlights
 
-- **Wi-Fi Sleep effect:** Mean MQTT QoS 0 RTT decreased from **121.279 ms with Sleep ON to 15.886 ms with Sleep OFF**. The final 1000-request benchmark showed a similar mean of **15.319 ms**.
-- **Protocol comparison:** Mean application RTT was **20.515 ms** for HTTP, **15.319 ms** for MQTT QoS 0, and **61.282 ms** for MQTT QoS 1.
-- **Separating ESP32 processing time:** Benchmark-handler processing was **about 0.4 ms** for all three conditions, so the tens-of-milliseconds RTT differences were not explained by handler computation alone.
-- **User-visible latency:** Mean Light Control completion time was **1032.247 ms**, of which **1000 ms (about 96.9%)** came from programmed servo hold/return timing.
-- **Physical actuation improvement:** With the initial MG90S, ON succeeded **20/20** while OFF succeeded **7/20**. After replacing only the servo with an MG996R under the same mounting method, no failures were observed in the intermediate checks. Mounting and angles were then refined, and the final configuration achieved **ON 20/20 and OFF 20/20**.
+- **Wi-Fi configuration had a major latency impact:** While investigating unexpectedly high MQTT QoS 0 RTT, I isolated Wi-Fi Sleep as a variable; disabling it reduced mean RTT from **121.279 ms to 15.886 ms**.
+- **Compared protocol behavior under the same test conditions:** HTTP, MQTT QoS 0, and MQTT QoS 1 were each measured across 1000 requests, including application RTT and tail latency.
+- **Separated ESP32 processing from end-to-end RTT:** Benchmark-handler processing stayed near **0.4 ms** for all three conditions, showing that the protocol-level RTT differences were not explained by ESP32 handler computation alone.
+- **Separated the user-visible control bottleneck:** About **96.9%** of the roughly 1.03 s Light Control time came from intentionally programmed servo hold/return timing rather than communication.
+- **Improved physical reliability:** I separated switch-actuation failures from network behavior, tuned servo capability, mounting, and angles, and confirmed **40/40 ON/OFF** in the final short-run validation.
 
 ---
 
@@ -25,7 +36,7 @@ flowchart TD
     USER[Web Dashboard / User]
     PI[Raspberry Pi 5<br/>Edge Control Server]
     FLASK[Flask Application]
-    MQTT[Mosquitto MQTT Broker]
+    MQTT[Mosquitto MQTT Broker<br/>Benchmark Path]
     LIGHT[ESP32 Light Switch Node]
     PC[ESP32 PC Power Node]
     SERVO1[MG996R Servo]
@@ -35,17 +46,17 @@ flowchart TD
 
     USER --> PI
     PI --> FLASK
-    FLASK -->|HTTP| LIGHT
-    FLASK -->|HTTP| PC
-    FLASK --> MQTT
-    MQTT -->|MQTT| LIGHT
+    FLASK -->|HTTP Control| LIGHT
+    FLASK -->|HTTP Control / Status| PC
+    FLASK -.->|Benchmark Command| MQTT
+    MQTT -.->|MQTT Benchmark| LIGHT
     LIGHT --> SERVO1
     SERVO1 --> SWITCH
     PC --> SERVO2
     SERVO2 --> PCDEVICE
 ```
 
-The Raspberry Pi 5 acts as the central control server, while the ESP32 boards operate as control nodes connected to the physical servos and sensors.
+The Raspberry Pi 5 acts as the central control server, while the ESP32 boards operate as control nodes connected to the physical servos and sensors. **Actual Light/PC control uses the HTTP path; the MQTT path is an experimental path added for protocol benchmarking.**
 
 ## Implemented Nodes
 
