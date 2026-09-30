@@ -6,7 +6,7 @@ Raspberry Pi 5와 ESP32로 실제 물리 장치를 제어하고, 구현 과정�
 
 ## Quick Links
 
-**[전체 프로젝트 보고서 (PDF)](report/Edge_IoT_Control_System_Report.pdf)** · [실험 데이터 안내](data/README.md) · [Raw Data](data/raw/) · [분석 결과](data/processed/) · [ESP32 코드](esp32/) · [Raspberry Pi 코드](raspberry-pi/) · [English](README_EN.md)
+**[대표 프로젝트 보고서 (PDF)](report/Raspberry_Pi_5_ESP32_Edge_Control_System_Report.pdf)** · [개발·실험 기록](docs/README.md) · [실험 데이터 안내](data/README.md) · [Raw Data](data/raw/) · [분석 결과](data/processed/) · [ESP32 코드](esp32/) · [Raspberry Pi 코드](raspberry-pi/) · [English](README_EN.md)
 
 ## 실제 구현
 
@@ -202,10 +202,12 @@ OFF : 20 / 20
 ├── data/            # Raw / Processed Data, Figures
 ├── esp32/           # ESP32 Firmware
 ├── raspberry-pi/    # Flask Server / Benchmark
-├── docs/            # 개발 과정 및 초기 계획
+├── docs/            # 개발 과정·실험 기록·초기 계획
+│   └── experiment-log/
+│       └── Edge_IoT_Control_System_Development_and_Experiment_Log.pdf
 ├── images/
 ├── report/
-│   └── Edge_IoT_Control_System_Report.pdf
+│   └── Raspberry_Pi_5_ESP32_Edge_Control_System_Report.pdf
 ├── README.md
 └── README_EN.md
 ```
