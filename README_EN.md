@@ -21,11 +21,11 @@ A personal Raspberry Pi 5–ESP32 project that started with physical device cont
 
 ## Highlights
 
-- **Wi-Fi configuration had a major latency impact:** While investigating unexpectedly high MQTT QoS 0 RTT, I isolated Wi-Fi Sleep as a variable; disabling it reduced mean RTT from **121.279 ms to 15.886 ms**.
-- **Compared protocol behavior under the same test conditions:** HTTP, MQTT QoS 0, and MQTT QoS 1 were each measured across 1000 requests, including application RTT and tail latency.
+- **Wi-Fi configuration had a major latency impact:** While investigating unexpectedly high MQTT QoS 0 RTT, I isolated Wi-Fi Sleep as a variable; mean RTT decreased from **Sleep ON 121.279 ms to Sleep OFF 15.886 ms**.
+- **Compared protocol RTT distributions:** HTTP, MQTT QoS 0, and MQTT QoS 1 were each measured across 1000 requests to compare application RTT and tail latency.
 - **Separated ESP32 processing from end-to-end RTT:** Benchmark-handler processing stayed near **0.4 ms** for all three conditions, showing that the protocol-level RTT differences were not explained by ESP32 handler computation alone.
 - **Separated the user-visible control bottleneck:** About **96.9%** of the roughly 1.03 s Light Control time came from intentionally programmed servo hold/return timing rather than communication.
-- **Improved physical reliability:** I separated switch-actuation failures from network behavior, tuned servo capability, mounting, and angles, and confirmed **40/40 ON/OFF** in the final short-run validation.
+- **Improved physical actuation stability:** I separated switch-actuation failures from network behavior, tuned servo capability, mounting, and angles, and confirmed **40/40 ON/OFF** in the final short-run validation.
 
 ---
 
