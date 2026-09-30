@@ -11,7 +11,7 @@ Raspberry Pi 5와 ESP32로 실제 물리 장치를 제어하고, 구현 과정�
 ## 실제 구현
 
 <p align="center">
-  <img src="images/results/light_switch_node_servo_mount.jpeg" width="48%" alt="Light Switch Node">
+  <img src="https://github.com/user-attachments/assets/413b49e5-7dd0-4cfc-9106-fc72df5b7090" width="48%" alt="Light Switch Node">
   <img src="images/results/pc_power_node_servo_ldr_mount.jpeg" width="48%" alt="PC Power Node">
 </p>
 
