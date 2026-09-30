@@ -11,7 +11,7 @@ A personal Raspberry Pi 5–ESP32 project that started with physical device cont
 ## Actual Implementation
 
 <p align="center">
-  <img src="images/results/light_switch_node_servo_mount.jpeg" width="48%" alt="Light Switch Node">
+  <img src="https://github.com/user-attachments/assets/413b49e5-7dd0-4cfc-9106-fc72df5b7090" width="48%" alt="Light Switch Node">
   <img src="images/results/pc_power_node_servo_ldr_mount.jpeg" width="48%" alt="PC Power Node">
 </p>
 
