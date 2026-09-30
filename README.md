@@ -8,13 +8,24 @@ Raspberry Pi 5와 ESP32로 실제 물리 장치를 제어하고, 구현 과정�
 
 **[전체 프로젝트 보고서 (PDF)](report/Edge_IoT_Control_System_Report.pdf)** · [실험 데이터 안내](data/README.md) · [Raw Data](data/raw/) · [분석 결과](data/processed/) · [ESP32 코드](esp32/) · [Raspberry Pi 코드](raspberry-pi/) · [English](README_EN.md)
 
+## 실제 구현
+
+<p align="center">
+  <img src="images/results/light_switch_node_servo_mount.jpeg" width="48%" alt="Light Switch Node">
+  <img src="images/results/pc_power_node_servo_ldr_mount.jpeg" width="48%" alt="PC Power Node">
+</p>
+
+<p align="center">
+  <b>Light Switch Node</b> · <b>PC Power Node</b>
+</p>
+
 ## 핵심 하이라이트
 
-- **Wi-Fi Sleep 영향:** MQTT QoS 0 평균 RTT가 Sleep ON **121.279 ms → OFF 15.886 ms**로 감소했습니다. 최종 1000회 본실험에서도 **15.319 ms**가 측정됐습니다.
-- **통신 방식 비교:** 평균 Application RTT는 HTTP **20.515 ms**, MQTT QoS 0 **15.319 ms**, MQTT QoS 1 **61.282 ms**였습니다.
-- **ESP32 내부 처리시간 분리:** Benchmark Handler 처리시간은 세 조건 모두 **약 0.4 ms**로 비슷했습니다. 따라서 수십 ms 수준의 RTT 차이는 Handler 계산시간만으로 설명되지 않았습니다.
-- **실제 체감 지연:** Light Control 평균 완료시간은 **1032.247 ms**였고, 이 중 코드에 설정한 Servo Hold·Return 시간이 **1000 ms(약 96.9%)**였습니다.
-- **물리 구동 개선:** 초기 MG90S에서는 **ON 20/20, OFF 7/20**이었습니다. 같은 고정 방식에서 MG996R로 교체한 뒤 당시 확인한 동작에서는 실패가 없었고, 이후 고정과 각도를 다듬은 최종 조건에서 **ON 20/20, OFF 20/20**을 확인했습니다.
+- **Wi-Fi 설정이 Latency에 큰 영향을 줌:** 초기 MQTT QoS 0의 높은 RTT를 확인하는 과정에서 Wi-Fi Sleep을 변수로 분리했고, Sleep OFF에서 평균 RTT가 **121.279 ms → 15.886 ms**로 크게 감소했습니다.
+- **Protocol별 동작 특성 비교:** 동일 조건에서 HTTP, MQTT QoS 0, MQTT QoS 1을 각각 1000회 측정해 Application RTT와 Tail Latency를 비교했습니다.
+- **ESP32 처리시간을 전체 RTT와 분리:** Benchmark Handler 내부 처리는 세 조건 모두 **약 0.4 ms**로 비슷해, Protocol별 RTT 차이가 ESP32 계산시간만으로 설명되지 않음을 확인했습니다.
+- **실제 제어 Bottleneck 분리:** Light Control의 약 1.03초 중 **약 96.9%**가 의도적으로 설정한 Servo Hold·Return 시간이어서, 통신 지연과 사용자 체감 제어시간을 구분했습니다.
+- **Physical Reliability 개선:** 실제 스위치 제어 실패를 Network 문제와 분리해 Servo Capability·Mounting·Angle을 조정했고, 최종 단기 반복 시험에서 **ON/OFF 40/40**을 확인했습니다.
 
 ---
 
@@ -25,7 +36,7 @@ flowchart TD
     USER[Web Dashboard / User]
     PI[Raspberry Pi 5<br/>Edge Control Server]
     FLASK[Flask Application]
-    MQTT[Mosquitto MQTT Broker]
+    MQTT[Mosquitto MQTT Broker<br/>Benchmark Path]
     LIGHT[ESP32 Light Switch Node]
     PC[ESP32 PC Power Node]
     SERVO1[MG996R Servo]
@@ -35,17 +46,17 @@ flowchart TD
 
     USER --> PI
     PI --> FLASK
-    FLASK -->|HTTP| LIGHT
-    FLASK -->|HTTP| PC
-    FLASK --> MQTT
-    MQTT -->|MQTT| LIGHT
+    FLASK -->|HTTP Control| LIGHT
+    FLASK -->|HTTP Control / Status| PC
+    FLASK -.->|Benchmark Command| MQTT
+    MQTT -.->|MQTT Benchmark| LIGHT
     LIGHT --> SERVO1
     SERVO1 --> SWITCH
     PC --> SERVO2
     SERVO2 --> PCDEVICE
 ```
 
-Raspberry Pi 5가 중앙 제어 서버 역할을 하고, ESP32가 실제 서보와 센서에 연결되는 제어 노드로 동작합니다.
+Raspberry Pi 5가 중앙 제어 서버 역할을 하고, ESP32가 실제 서보와 센서에 연결되는 제어 노드로 동작합니다. **실제 Light/PC 제어는 HTTP Path를 사용하며, MQTT Path는 Protocol Benchmark를 위해 추가한 실험 경로입니다.**
 
 ## 구현한 기능
 
