@@ -15,7 +15,9 @@ A personal Raspberry Pi 5–ESP32 project that progressed from **implementation 
 - **Wi-Fi Sleep A/B test:** Mean MQTT QoS 0 RTT decreased from **121.279 ms with Sleep ON to 15.886 ms with Sleep OFF** (30 requests per condition). The final 1000-request Sleep OFF benchmark showed a similar mean of **15.319 ms**, supporting the effect of this setting.
 - **Separating ESP32 processing time:** Measured handler processing was **about 0.4 ms** for all three protocols and could not explain application RTT differences across **15–61 ms**. The remaining interval was treated as an RTT remainder containing host, network, and protocol processing.
 - **Light E2E latency analysis:** Across 20 measurements, programmed servo hold and return delays accounted for **1000 ms (about 96.9%)** of the **1032.247 ms** mean. The endpoint was **application request completion**, not the instant of physical contact.
-- **Physical actuation improvement and short-run validation:** Observed success improved from **7/20** initial trials to **40/40** after jointly changing the servo, reinforcing its mounting, and calibrating angles. This is **short-run validation**, not evidence of long-term reliability or the isolated effect of any one change.
+- **Physical actuation improvement and short-run validation:** Under the initial MG90S condition, **ON succeeded in 20/20 trials while OFF succeeded in 7/20 trials**. After jointly changing the servo, reinforcing the mounting, and calibrating angles, the final condition achieved **ON 20/20 and OFF 20/20**. Because multiple factors were changed together, the improvement is not attributed to any single factor.
+
+> In the full technical report, the initial `7/20 (35%)` notation refers to the MG90S **OFF-direction actuation test**.
 
 > Implementation and analysis scope: **Light Switch Node · PC Power Node**. IR and Camera/Vision were initial extension ideas and are not part of the final implementation.
 
@@ -414,12 +416,15 @@ The physical Light Control path was therefore dominated by the intentionally pro
 
 ## Actuation Reliability Improvement
 
-The initial MG90S-based prototype achieved:
+The initial MG90S-based prototype was tested separately by actuation direction:
 
 ```text
-7 / 20 successful actuations
-= 35%
+ON  : 20 / 20
+OFF : 7 / 20
+      = 35%
 ```
+
+The initial `7/20 (35%)` value refers specifically to the **OFF-direction actuation trials**.
 
 The final configuration combined:
 
