@@ -15,7 +15,9 @@ Raspberry Pi 5와 ESP32로 실제 물리 장치를 제어하고, **구현 → �
 - **Wi-Fi Sleep A/B test:** MQTT QoS 0의 평균 RTT가 Sleep ON **121.279 ms → OFF 15.886 ms**로 감소했습니다(조건별 30회). 최종 Sleep OFF 본실험 1000회에서도 **15.319 ms**를 관찰하여 설정의 영향을 재확인했습니다.
 - **ESP32 처리시간 분리:** 측정한 Handler 처리시간은 세 protocol 모두 **약 0.4 ms**로, **15–61 ms**의 Application RTT 차이를 설명하기 어려웠습니다. 나머지 구간은 Host·Network·Protocol 처리가 섞인 RTT remainder로 해석했습니다.
 - **Light E2E 지연 분석:** 20회 측정에서 평균 **1032.247 ms** 중 **1000 ms(약 96.9%)**가 설정된 Servo Hold·Return 지연이었습니다. 측정 기준은 물리 접촉 순간이 아닌 **Application Request Completion**입니다.
-- **물리 구동 개선과 단기 검증:** 초기 **7/20** 성공에서 Servo 교체·고정 보강·각도 보정을 함께 적용한 뒤 **40/40** 성공을 관찰했습니다. 이는 **short-run validation**이며 장기 신뢰성이나 개별 개선 요소의 효과를 입증하지 않습니다.
+- **물리 구동 개선과 단기 검증:** 초기 MG90S 조건에서 **ON 20/20, OFF 7/20**을 관찰했습니다. 이후 Servo 교체·고정 보강·각도 보정을 함께 적용한 최종 조건에서는 **ON 20/20, OFF 20/20**이 성공했습니다. 여러 조건을 동시에 변경했으므로 성공률 향상을 특정 한 요소의 효과로 분리하지 않습니다.
+
+> 전체 기술 보고서의 초기 `7/20 (35%)` 표기는 MG90S의 **OFF 동작 시험 결과**를 의미합니다.
 
 > 구현 및 분석 범위: **Light Switch Node · PC Power Node**. IR 및 Camera/Vision은 초기 확장 계획이며 최종 구현에 포함되지 않습니다.
 
@@ -416,12 +418,15 @@ Non-programmed Remainder
 
 ## 물리 구동 신뢰성 개선
 
-초기 Light Switch Prototype은 MG90S Servo를 사용했고 다음 성공률을 보였습니다.
+초기 Light Switch Prototype은 MG90S Servo를 사용했고 방향별 시험 결과는 다음과 같았습니다.
 
 ```text
-7 / 20 성공
-= 35%
+ON  : 20 / 20
+OFF : 7 / 20
+     = 35%
 ```
+
+여기서 초기 `7/20 (35%)`는 **OFF 동작 시험 결과**를 의미합니다.
 
 이후 다음 요소를 함께 개선했습니다.
 
