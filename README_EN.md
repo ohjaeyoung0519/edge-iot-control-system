@@ -6,7 +6,7 @@ A personal Raspberry Pi 5–ESP32 project that started with physical device cont
 
 ## Quick Links
 
-**[Full Project Report (PDF)](report/Edge_IoT_Control_System_Report.pdf)** · [Dataset Guide](data/README_EN.md) · [Raw Data](data/raw/) · [Processed Results](data/processed/) · [ESP32 Code](esp32/) · [Raspberry Pi Code](raspberry-pi/) · [한국어](README.md)
+**[Main Project Report (PDF)](report/Raspberry_Pi_5_ESP32_Edge_Control_System_Report.pdf)** · [Development & Experiment Docs](docs/README.md) · [Dataset Guide](data/README_EN.md) · [Raw Data](data/raw/) · [Processed Results](data/processed/) · [ESP32 Code](esp32/) · [Raspberry Pi Code](raspberry-pi/) · [한국어](README.md)
 
 ## Highlights
 
@@ -191,10 +191,12 @@ More detailed raw data and figures are documented in [data/README_EN.md](data/RE
 ├── data/            # Raw / Processed Data, Figures
 ├── esp32/           # ESP32 firmware
 ├── raspberry-pi/    # Flask server / benchmark tools
-├── docs/            # Development notes and initial plans
+├── docs/            # Development, experiment records, and initial plans
+│   └── experiment-log/
+│       └── Edge_IoT_Control_System_Development_and_Experiment_Log.pdf
 ├── images/
 ├── report/
-│   └── Edge_IoT_Control_System_Report.pdf
+│   └── Raspberry_Pi_5_ESP32_Edge_Control_System_Report.pdf
 ├── README.md
 └── README_EN.md
 ```
