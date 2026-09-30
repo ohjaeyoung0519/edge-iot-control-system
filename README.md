@@ -418,12 +418,15 @@ Non-programmed Remainder
 
 ## 물리 구동 신뢰성 개선
 
-초기 Light Switch Prototype은 MG90S Servo를 사용했고 다음 성공률을 보였습니다.
+초기 Light Switch Prototype은 MG90S Servo를 사용했고 방향별 시험 결과는 다음과 같았습니다.
 
 ```text
-7 / 20 성공
-= 35%
+ON  : 20 / 20
+OFF : 7 / 20
+     = 35%
 ```
+
+여기서 초기 `7/20 (35%)`는 **OFF 동작 시험 결과**를 의미합니다.
 
 이후 다음 요소를 함께 개선했습니다.
 
