@@ -21,11 +21,11 @@ Raspberry Pi 5와 ESP32로 실제 물리 장치를 제어하고, 구현 과정�
 
 ## 핵심 하이라이트
 
-- **Wi-Fi 설정이 Latency에 큰 영향을 줌:** 초기 MQTT QoS 0의 높은 RTT를 확인하는 과정에서 Wi-Fi Sleep을 변수로 분리했고, Sleep OFF에서 평균 RTT가 **121.279 ms → 15.886 ms**로 크게 감소했습니다.
-- **Protocol별 동작 특성 비교:** 동일 조건에서 HTTP, MQTT QoS 0, MQTT QoS 1을 각각 1000회 측정해 Application RTT와 Tail Latency를 비교했습니다.
+- **Wi-Fi 설정이 Latency에 큰 영향을 줌:** 초기 MQTT QoS 0의 높은 RTT를 확인하는 과정에서 Wi-Fi Sleep을 변수로 분리했고, 평균 RTT가 **Sleep ON 121.279 ms → Sleep OFF 15.886 ms**로 크게 감소했습니다.
+- **Protocol별 RTT 분포 비교:** 동일 조건에서 HTTP, MQTT QoS 0, MQTT QoS 1을 각각 1000회 측정해 Application RTT와 Tail Latency를 비교했습니다.
 - **ESP32 처리시간을 전체 RTT와 분리:** Benchmark Handler 내부 처리는 세 조건 모두 **약 0.4 ms**로 비슷해, Protocol별 RTT 차이가 ESP32 계산시간만으로 설명되지 않음을 확인했습니다.
 - **실제 제어 Bottleneck 분리:** Light Control의 약 1.03초 중 **약 96.9%**가 의도적으로 설정한 Servo Hold·Return 시간이어서, 통신 지연과 사용자 체감 제어시간을 구분했습니다.
-- **Physical Reliability 개선:** 실제 스위치 제어 실패를 Network 문제와 분리해 Servo Capability·Mounting·Angle을 조정했고, 최종 단기 반복 시험에서 **ON/OFF 40/40**을 확인했습니다.
+- **물리 구동 안정성 개선:** 실제 스위치 제어 실패를 Network 문제와 분리해 Servo Capability·Mounting·Angle을 조정했고, 최종 단기 반복 시험에서 **ON/OFF 40/40**을 확인했습니다.
 
 ---
 
