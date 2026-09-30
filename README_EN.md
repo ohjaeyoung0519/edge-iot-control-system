@@ -15,9 +15,9 @@ A personal Raspberry Pi 5–ESP32 project that progressed from **implementation 
 - **Wi-Fi Sleep A/B test:** Mean MQTT QoS 0 RTT decreased from **121.279 ms with Sleep ON to 15.886 ms with Sleep OFF** (30 requests per condition). The final 1000-request Sleep OFF benchmark showed a similar mean of **15.319 ms**, supporting the effect of this setting.
 - **Separating ESP32 processing time:** Measured handler processing was **about 0.4 ms** for all three protocols and could not explain application RTT differences across **15–61 ms**. The remaining interval was treated as an RTT remainder containing host, network, and protocol processing.
 - **Light E2E latency analysis:** Across 20 measurements, programmed servo hold and return delays accounted for **1000 ms (about 96.9%)** of the **1032.247 ms** mean. The endpoint was **application request completion**, not the instant of physical contact.
-- **Physical actuation improvement and short-run validation:** Under the initial MG90S condition, **ON succeeded in 20/20 trials while OFF succeeded in 7/20 trials**. After jointly changing the servo, reinforcing the mounting, and calibrating angles, the final condition achieved **ON 20/20 and OFF 20/20**. Because multiple factors were changed together, the improvement is not attributed to any single factor.
+- **Physical actuation improvement and short-run validation:** Under the initial MG90S condition, **ON succeeded in 20/20 trials while OFF succeeded in 7/20 trials**. Next, **only the servo was changed to an MG996R while keeping the same mounting method, and all actuations attempted in that intermediate check succeeded**. The mounting was then reinforced and the control angles were calibrated to avoid pressing too deeply or not far enough. The final condition achieved **ON 20/20 and OFF 20/20**.
 
-> In the full technical report, the initial `7/20 (35%)` notation refers to the MG90S **OFF-direction actuation test**.
+> In the full technical report, the initial `7/20 (35%)` notation refers to the MG90S **OFF-direction actuation test**. The report summarizes the MG996R swap, mounting reinforcement, and angle calibration together as the final improvement process, but the actual sequence was **MG996R swap under the same mounting method → mounting reinforcement and angle calibration**. The exact number of trials in the intermediate MG996R-only check was not separately recorded.
 
 > Implementation and analysis scope: **Light Switch Node · PC Power Node**. IR and Camera/Vision were initial extension ideas and are not part of the final implementation.
 
@@ -426,11 +426,13 @@ OFF : 7 / 20
 
 The initial `7/20 (35%)` value refers specifically to the **OFF-direction actuation trials**.
 
-The final configuration combined:
+To isolate the first change, the **mounting method and structure were kept the same while only the MG90S was replaced with an MG996R**. All actuations attempted in this intermediate check succeeded, indicating that the servo change affected the initial failure behavior. However, the exact number of repetitions in this intermediate check was not separately recorded, so it is not treated as a quantitative A/B result.
 
-- MG996R servo
+After the MG996R swap, the remaining issue was not simply insufficient force: depending on the angle, the switch could be pressed too deeply or not far enough. The following refinements were then applied:
+
 - Stronger mechanical mounting
 - 5° / 10° control-angle calibration
+- Adjustment of the usable range between excessive and insufficient pressing
 
 **Final Short-run Validation:**
 
@@ -443,9 +445,9 @@ Total
 = 100% of observed trials
 ```
 
-The 40/40 result applies to this configuration and these test conditions; it does not establish long-term reliability or guarantee success in other environments.
+The 40/40 result applies to the final configuration and these test conditions; it does not establish long-term reliability or guarantee success in other environments.
 
-The reliability improvement is attributed to the combined effect of actuator capability, mechanical mounting, and angle calibration rather than servo torque alone.
+The actual improvement sequence was therefore **servo-only change → mounting and angle refinement → final 40/40 validation**.
 
 ### Short-Term Servo Stress Test
 
@@ -467,7 +469,7 @@ This is also a short-term observation over 10 minutes, not a long-term durabilit
 3. **ESP32 Wi-Fi power-saving configuration had a large effect on latency.**
 4. **Raspberry Pi 5 resource usage remained low under the tested workload.**
 5. **Physical actuation timing dominated user-visible Light Control latency.**
-6. **Joint improvements to the actuator, mounting, and calibration were followed by 40/40 successful trials in short-run physical actuation validation.**
+6. **No failures were observed in the intermediate MG996R-only check with the same mounting method, and the final mounting/angle-refined configuration achieved 40/40 successful trials in short-run validation.**
 
 ---
 
